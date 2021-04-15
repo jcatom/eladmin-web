@@ -22,8 +22,8 @@
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
         <el-table-column type="selection" width="55" />
         <el-table-column prop="orderNo" label="订单编号" />
-        <el-table-column prop="expiryUserId" label="兑奖用户ID" />
-        <el-table-column prop="ticketPhotoUrl" label="即开票图片地址" />
+        <el-table-column prop="expiryUserId" label="兑奖用户" />
+        <el-table-column prop="ticketPhotoUrl" label="即开票图片" />
         <el-table-column prop="status" label="兑奖状态">
           <template slot-scope="scope">
             {{ dict.label.expiry_status[scope.row.status] }}
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import crudJkpExpiryOrder from '@/api/jkpExpiryOrder'
+import crudJkpExpiryOrder from '@/api/jkpExpiryOrder/jkpExpiryOrder'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
