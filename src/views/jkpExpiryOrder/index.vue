@@ -6,6 +6,7 @@
         <!-- 搜索 -->
         <label class="el-form-item-label">兑奖状态</label>
         <el-input v-model="query.status" clearable placeholder="兑奖状态" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <date-range-picker v-model="query.createTime" class="date-item" />
         <rrOperation :crud="crud" />
       </div>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
@@ -20,7 +21,18 @@
       </el-dialog>
       <!--表格渲染-->
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-        <el-table-column type="selection" width="55" />
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="请求方法">
+                <span>{{ props.row.method }}</span>
+              </el-form-item>
+              <el-form-item label="请求参数">
+                <span>{{ props.row.params }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
         <el-table-column prop="orderNo" label="订单编号" />
         <el-table-column prop="expiryUserId" label="兑奖用户" />
         <el-table-column prop="ticketPhotoUrl" label="即开票图片" />
@@ -47,20 +59,33 @@
 
 <script>
 import crudJkpExpiryOrder from '@/api/jkpExpiryOrder/jkpExpiryOrder'
-import CRUD, { presenter, header, form, crud } from '@crud/crud'
+import CRUD, { presenter, header, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import DateRangePicker from '@/components/DateRangePicker'
 
-const defaultForm = { id: null, orderNo: null, expiryUserId: null, ticketPhotoUrl: null, status: null, createTime: null, updateTime: null }
 export default {
   name: 'JkpExpiryOrder',
-  components: { pagination, crudOperation, rrOperation, udOperation },
-  mixins: [presenter(), header(), form(defaultForm), crud()],
+  components: { pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
+  mixins: [presenter(), header(), crud()],
   dicts: ['expiry_status'],
   cruds() {
-    return CRUD({ title: '即开票订单管理', url: 'api/jkpExpiryOrder', idField: 'id', sort: 'id,desc', crudMethod: { ...crudJkpExpiryOrder }})
+    return CRUD({
+      title: '即开票订单管理',
+      url: 'api/jkpExpiryOrder',
+      dField: 'id',
+      sort: ['createTime,desc'],
+      crudMethod: { ...crudJkpExpiryOrder },
+      optShow: {
+        add: false,
+        edit: false,
+        del: false,
+        reset: true,
+        download: true
+      }
+    })
   },
   data() {
     return {
@@ -68,26 +93,6 @@ export default {
         add: ['admin', 'jkpExpiryOrder:add'],
         edit: ['admin', 'jkpExpiryOrder:edit'],
         del: ['admin', 'jkpExpiryOrder:del']
-      },
-      rules: {
-        id: [
-          { required: true, message: '订单ID不能为空', trigger: 'blur' }
-        ],
-        orderNo: [
-          { required: true, message: '订单编号不能为空', trigger: 'blur' }
-        ],
-        expiryUserId: [
-          { required: true, message: '兑奖用户ID不能为空', trigger: 'blur' }
-        ],
-        ticketPhotoUrl: [
-          { required: true, message: '即开票图片地址不能为空', trigger: 'blur' }
-        ],
-        status: [
-          { required: true, message: '兑奖状态不能为空', trigger: 'blur' }
-        ],
-        createTime: [
-          { required: true, message: ' 创建时间不能为空', trigger: 'blur' }
-        ]
       },
       queryTypeOptions: [
         { key: 'status', display_name: '兑奖状态' }
