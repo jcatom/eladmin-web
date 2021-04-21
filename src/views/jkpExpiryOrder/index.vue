@@ -13,7 +13,15 @@
       <crudOperation :permission="permission" />
       <!--表单组件-->
       <el-dialog :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="500px">
-        <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px" />
+        <el-form ref="form" :model="form" size="small" label-width="80px">
+          <el-form-item label="订单状态">
+            <el-radio-group v-model="form.status" style="width: 280px">
+              <el-radio label="0">待兑奖</el-radio>
+              <el-radio label="1">已兑奖</el-radio>
+              <el-radio label="2">已转账</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="text" @click="crud.cancelCU">取消</el-button>
           <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
@@ -35,7 +43,21 @@
         </el-table-column>
         <el-table-column prop="orderNo" label="订单编号" />
         <el-table-column prop="expiryUserId" label="兑奖用户" />
-        <el-table-column prop="ticketPhotoUrl" label="即开票图片" />
+        <el-table-column prop="ticketPhotoUrl" label="即开票图片">
+          <template slot-scope="{row}">
+            <el-image
+              :src=" row.ticketPhotoUrl"
+              :preview-src-list="[row.ticketPhotoUrl]"
+              fit="contain"
+              lazy
+              class="el-avatar"
+            >
+              <div slot="error">
+                <i class="el-icon-document" />
+              </div>
+            </el-image>
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="兑奖状态">
           <template slot-scope="scope">
             {{ dict.label.expiry_status[scope.row.status] }}
@@ -59,21 +81,22 @@
 
 <script>
 import crudJkpExpiryOrder from '@/api/jkpExpiryOrder/jkpExpiryOrder'
-import CRUD, { presenter, header, crud } from '@crud/crud'
+import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 import DateRangePicker from '@/components/DateRangePicker'
 
+const defaultForm = { id: null, orderNo: null, expiryUserId: null, ticketPhotoUrl: null, status: null, createTime: null, updateTime: null }
 export default {
   name: 'JkpExpiryOrder',
   components: { pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
-  mixins: [presenter(), header(), crud()],
+  mixins: [presenter(), header(), form(defaultForm), crud()],
   dicts: ['expiry_status'],
   cruds() {
     return CRUD({
-      title: '即开票订单管理',
+      title: '订单状态',
       url: 'api/jkpExpiryOrder',
       dField: 'id',
       sort: ['createTime,desc'],
