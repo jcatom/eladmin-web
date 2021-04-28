@@ -5,7 +5,23 @@
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
         <label class="el-form-item-label">兑奖状态</label>
-        <el-input v-model="query.status" clearable placeholder="兑奖状态" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <el-select
+          v-model="query.status"
+          clearable
+          size="small"
+          placeholder="兑奖状态"
+          class="filter-item"
+          style="width: 110px"
+          @change="crud.toQuery"
+        >
+          <el-option
+            v-for="item in dict.expiry_status"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <label class="el-form-item-label">创建时间</label>
         <date-range-picker v-model="query.createTime" class="date-item" />
         <rrOperation :crud="crud" />
       </div>
@@ -16,9 +32,9 @@
         <el-form ref="form" :model="form" size="small" label-width="80px">
           <el-form-item label="订单状态">
             <el-radio-group v-model="form.status" style="width: 280px">
-              <el-radio label="0">待兑奖</el-radio>
-              <el-radio label="1">已兑奖</el-radio>
-              <el-radio label="2">已转账</el-radio>
+              <el-radio :label="0">待兑奖</el-radio>
+              <el-radio :label="1">已兑奖</el-radio>
+              <el-radio :label="2">已转账</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
@@ -88,7 +104,7 @@ import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 import DateRangePicker from '@/components/DateRangePicker'
 
-const defaultForm = { id: null, orderNo: null, expiryUserId: null, ticketPhotoUrl: null, status: null, createTime: null, updateTime: null }
+const defaultForm = { id: null, orderNo: null, expiryUserId: null, ticketPhotoUrl: null, status: 0, createTime: null, updateTime: null }
 export default {
   name: 'JkpExpiryOrder',
   components: { pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
