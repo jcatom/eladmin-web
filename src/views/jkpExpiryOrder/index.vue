@@ -48,11 +48,23 @@
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="请求方法">
-                <span>{{ props.row.method }}</span>
+              <el-form-item>
+                <span>
+                  <el-image :src="props.row.ticketPhotoUrl" fit="cover" lazy style="width: 100%; height: 100%">
+                    <div slot="error">
+                      <i class="el-icon-document" />
+                    </div>
+                  </el-image>
+                </span>
               </el-form-item>
-              <el-form-item label="请求参数">
-                <span>{{ props.row.params }}</span>
+              <el-form-item>
+                <span>
+                  <el-image :src="props.row.ticketPhotoUrl" fit="cover" lazy style="width: 100%; height: 100%">
+                    <div slot="error">
+                      <i class="el-icon-document" />
+                    </div>
+                  </el-image>
+                </span>
               </el-form-item>
             </el-form>
           </template>
@@ -63,10 +75,8 @@
           <template slot-scope="{row}">
             <el-image
               :src=" row.ticketPhotoUrl"
-              :preview-src-list="[row.ticketPhotoUrl]"
-              fit="contain"
+              fit="cover"
               lazy
-              class="el-avatar"
             >
               <div slot="error">
                 <i class="el-icon-document" />
